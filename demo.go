@@ -1,5 +1,9 @@
 package main
 
+import (
+	"log"
+)
+
 func realmain(inputFile string) (err error) {
 	urls, err := ReadURLs(inputFile)
 	if err != nil {
@@ -17,7 +21,7 @@ func realmain(inputFile string) (err error) {
 	go func() {
 		for err := range errsChan {
 			if err != nil {
-				return
+				log.Printf("%+v", err)
 			}
 		}
 	}()
