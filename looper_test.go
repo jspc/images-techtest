@@ -48,15 +48,16 @@ func TestLooper_Loop(t *testing.T) {
 		}
 	}()
 
-	count := 1
+	count := 2
 
 	l := NewLooper(count)
 	l.Pool[0].c = stubDownloader{"some-image", 200, false}
+	l.Pool[0].c = stubDownloader{"", 404, false}
 
 	urls := URLs{"https://example.com/image.png"}
 
-	fC := make(chan File, 1)
+	storage, _ := NewStorage("testdata/looper_test")
 	eC := make(chan error, 1)
 
-	l.Loop(urls, fC, eC)
+	l.Loop(urls, storage, eC)
 }

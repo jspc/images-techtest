@@ -40,7 +40,7 @@ func (l *Looper) NextClient() Client {
 	return c
 }
 
-func (l Looper) Loop(urls URLs, files chan File, errors chan error) {
+func (l Looper) Loop(urls URLs, storage Storage, errors chan error) {
 	ctx := context.Background()
 
 	for _, u := range urls {
@@ -51,9 +51,13 @@ func (l Looper) Loop(urls URLs, files chan File, errors chan error) {
 
 			client := l.NextClient()
 			file, err := client.Download(url)
+			if err != nil {
+				errors <- err
 
-			files <- file
-			errors <- err
+				return
+			}
+
+			errors <- storage.Save(file)
 
 		}(u)
 	}
