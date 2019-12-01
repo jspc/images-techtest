@@ -8,15 +8,19 @@ import (
 )
 
 type Looper struct {
-	Pool []Client
+	Pool    []Client
+	URLs    URLs
+	Storage Storage
 
 	sem  *semaphore.Weighted
 	c    int
 	lock sync.Mutex
 }
 
-func NewLooper(count int) (l Looper) {
+func NewLooper(count int, urls URLs, storage Storage) (l Looper) {
 	l.Pool = make([]Client, count)
+	l.URLs = urls
+	l.Storage = storage
 
 	l.sem = semaphore.NewWeighted(int64(count))
 	l.c = 0
@@ -40,10 +44,10 @@ func (l *Looper) NextClient() Client {
 	return c
 }
 
-func (l Looper) Loop(urls URLs, storage Storage, errors chan error) {
+func (l Looper) Loop(errors chan error) {
 	ctx := context.Background()
 
-	for _, u := range urls {
+	for _, u := range l.URLs {
 		l.sem.Acquire(ctx, 1)
 
 		go func(url string) {
@@ -57,7 +61,7 @@ func (l Looper) Loop(urls URLs, storage Storage, errors chan error) {
 				return
 			}
 
-			errors <- storage.Save(file)
+			errors <- l.Storage.Save(file)
 
 		}(u)
 	}

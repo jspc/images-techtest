@@ -7,7 +7,7 @@ import (
 func TestNewLooper(t *testing.T) {
 	count := 3
 
-	l := NewLooper(count)
+	l := NewLooper(count, URLs{}, Storage{})
 
 	if len(l.Pool) != count {
 		t.Errorf("expected %d clients, received %d", count, len(l.Pool))
@@ -17,7 +17,7 @@ func TestNewLooper(t *testing.T) {
 func TestLooper_NextClient(t *testing.T) {
 	count := 3
 
-	l := NewLooper(count)
+	l := NewLooper(count, URLs{}, Storage{})
 
 	c := l.NextClient()
 	if c.ID != 0 {
@@ -49,15 +49,14 @@ func TestLooper_Loop(t *testing.T) {
 	}()
 
 	count := 2
+	urls := URLs{"https://example.com/image.png"}
+	storage, _ := NewStorage("testdata/looper_test")
 
-	l := NewLooper(count)
+	l := NewLooper(count, urls, storage)
 	l.Pool[0].c = stubDownloader{"some-image", 200, false}
 	l.Pool[0].c = stubDownloader{"", 404, false}
 
-	urls := URLs{"https://example.com/image.png"}
-
-	storage, _ := NewStorage("testdata/looper_test")
 	eC := make(chan error, 1)
 
-	l.Loop(urls, storage, eC)
+	l.Loop(eC)
 }
