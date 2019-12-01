@@ -53,7 +53,7 @@ func TestClient_Download(t *testing.T) {
 				t.Errorf("unexpected error: %+v", err)
 			}
 
-			gotString := string(got)
+			gotString := string(got.contents)
 			if gotString != test.expect {
 				t.Errorf("expected %q, received %q", gotString, test.expect)
 			}

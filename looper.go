@@ -40,7 +40,7 @@ func (l *Looper) NextClient() Client {
 	return c
 }
 
-func (l Looper) Loop(urls URLs, files chan []byte, errors chan error) {
+func (l Looper) Loop(urls URLs, files chan File, errors chan error) {
 	ctx := context.Background()
 
 	for _, u := range urls {

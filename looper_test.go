@@ -55,8 +55,8 @@ func TestLooper_Loop(t *testing.T) {
 
 	urls := URLs{"https://example.com/image.png"}
 
-	fC := make(chan []byte, 1)
-	fE := make(chan error, 1)
+	fC := make(chan File, 1)
+	eC := make(chan error, 1)
 
-	l.Loop(urls, fC, fE)
+	l.Loop(urls, fC, eC)
 }

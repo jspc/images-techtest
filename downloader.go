@@ -36,7 +36,7 @@ func NewClient(id int) Client {
 	}
 }
 
-func (c Client) Download(url string) (data []byte, err error) {
+func (c Client) Download(url string) (data File, err error) {
 	c.Print("Downloading", url)
 
 	resp, err := c.c.Get(url)
@@ -52,7 +52,17 @@ func (c Client) Download(url string) (data []byte, err error) {
 
 	c.Print("Completed", url)
 
-	return ioutil.ReadAll(resp.Body)
+	f, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	data = File{
+		filename: deriveFilename(url),
+		contents: f,
+	}
+
+	return
 }
 
 func (c Client) Print(operation, url string) {
