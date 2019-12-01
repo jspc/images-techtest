@@ -25,16 +25,20 @@ type DownloadClient interface {
 }
 
 type Client struct {
-	c DownloadClient
+	ID int
+	c  DownloadClient
 }
 
-func NewClient() Client {
+func NewClient(id int) Client {
 	return Client{
-		c: &http.Client{},
+		ID: id,
+		c:  &http.Client{},
 	}
 }
 
 func (c Client) Download(url string) (data []byte, err error) {
+	c.Print("Downloading", url)
+
 	resp, err := c.c.Get(url)
 	if err != nil {
 		return
@@ -46,5 +50,11 @@ func (c Client) Download(url string) (data []byte, err error) {
 		return
 	}
 
+	c.Print("Completed", url)
+
 	return ioutil.ReadAll(resp.Body)
+}
+
+func (c Client) Print(operation, url string) {
+	fmt.Printf("#%d - %s %s\n", c.ID, operation, url)
 }

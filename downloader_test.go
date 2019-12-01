@@ -41,7 +41,7 @@ func TestClient_Download(t *testing.T) {
 		{"non-200", stubDownloader{"", 404, false}, "", true},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			c := Client{test.downloadClient}
+			c := Client{c: test.downloadClient}
 
 			got, err := c.Download(url)
 
